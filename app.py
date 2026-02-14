@@ -88,17 +88,48 @@ def get_news():
 
         context = "\n\n".join(article_snippets)
 
-        # 2. Gemini Summary & Vibe Check
-        model = genai.GenerativeModel('gemini-2.0-flash')
-        prompt = (
-            f"Based on the following news snippets about '{topic}', provide:\n"
-            "1. A 3-point executive summary (bullet points).\n"
-            "2. A 'Vibe Check' sentiment (one of: Positive, Neutral, Negative).\n\n"
-            f"News Snippets:\n{context}\n\n"
-            "Respond in format:\nSummary: [Point 1]\n[Point 2]\n[Point 3]\nSentiment: [Vibe Check]"
-        )
+        # 2. Gemini Summary & Vibe Check with Fallback
+        
+        # List of models to try in order of preference
+        models_to_try = [
+            'gemini-2.5-flash',
+            'gemini-2.0-flash',
+            'gemini-2.0-flash-lite',
+            'gemini-flash-latest'
+        ]
+        
+        model = None
+        gemini_response = None
+        last_error = None
 
-        gemini_response = model.generate_content(prompt)
+        for model_name in models_to_try:
+            try:
+                print(f"Trying Gemini model: {model_name}...")
+                model = genai.GenerativeModel(model_name)
+                
+                # Check if model works with a simple prompt first (optional but safer)
+                # or just proceed with the actual prompt
+                
+                prompt = (
+                    f"Based on the following news snippets about '{topic}', provide:\n"
+                    "1. A 3-point executive summary (bullet points).\n"
+                    "2. A 'Vibe Check' sentiment (one of: Positive, Neutral, Negative).\n\n"
+                    f"News Snippets:\n{context}\n\n"
+                    "Respond in format:\nSummary: [Point 1]\n[Point 2]\n[Point 3]\nSentiment: [Vibe Check]"
+                )
+                
+                gemini_response = model.generate_content(prompt)
+                if gemini_response:
+                    print(f"Success with model: {model_name}")
+                    break
+            except Exception as e:
+                print(f"Failed with {model_name}: {e}")
+                last_error = e
+                continue
+        
+        if not gemini_response:
+            raise Exception(f"All Gemini models failed. Last error: {last_error}")
+
         full_text = gemini_response.text
 
         # Parsing (basic)

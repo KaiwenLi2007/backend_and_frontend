@@ -2,6 +2,6 @@ flask
 flask-cors
 flask-sqlalchemy
 requests
-google-generativeai
+google-generativeai>=0.3.2
 python-dotenv
 gunicorn
