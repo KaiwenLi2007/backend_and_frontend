@@ -29,30 +29,28 @@
                         cardBg: 'rgba(255, 255, 255, 0.05)',
                         glassBorder: 'rgba(255, 255, 255, 0.12)',
                     },
+                    keyframes: {
+                        fadeIn: {
+                            '0%': { opacity: '0', transform: 'translateY(10px)' },
+                            '100%': { opacity: '1', transform: 'translateY(0)' },
+                        },
+                        slideIn: {
+                            '0%': { opacity: '0', transform: 'translateX(-20px)' },
+                            '100%': { opacity: '1', transform: 'translateX(0)' },
+                        },
+                    },
+                    animation: {
+                        'fade-in': 'fadeIn 0.6s ease-out forwards',
+                        'slide-in': 'slideIn 0.4s ease-out forwards',
+                    },
                 },
             },
         }
     </script>
-    <style type="text/tailwindcss">
-        @layer base {
-            body { @apply bg-bgDark text-gray-100 font-outfit; }
-        }
-        @layer components {
-            .glass { @apply backdrop-blur-xl bg-white/5 border border-white/10 rounded-3xl; }
-            .btn-accent { @apply bg-accent hover:opacity-90 text-white font-semibold py-3 px-8 rounded-2xl transition-all shadow-[0_0_15px_rgba(88,166,255,0.3)]; }
-            .vibe-badge { @apply px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-widest border; }
-            .vibe-positive { @apply bg-green-500/10 text-green-400 border-green-500/50; }
-            .vibe-neutral { @apply bg-gray-500/10 text-gray-400 border-gray-500/50; }
-            .vibe-negative { @apply bg-red-500/10 text-red-400 border-red-500/50; }
-        }
-        .animate-fade-in { animation: fadeIn 0.6s ease-out forwards; }
-        .animate-slide-in { animation: slideIn 0.4s ease-out forwards; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-        @keyframes slideIn { from { opacity: 0; transform: translateX(-20px); } to { opacity: 1; transform: translateX(0); } }
-    </style>
+
 </head>
 
-<body>
+<body class="bg-bgDark text-gray-100 font-outfit">
     <div id="root"></div>
 
     <!-- Main React App -->
@@ -178,7 +176,7 @@
                             <button
                                 type="submit"
                                 disabled={loading}
-                                className="btn-accent flex items-center justify-center min-w-[140px]"
+                                className="flex items-center justify-center min-w-[140px] bg-accent hover:opacity-90 text-white font-semibold py-3 px-8 rounded-2xl transition-all shadow-[0_0_15px_rgba(88,166,255,0.3)]"
                             >
                                 {loading ? (
                                     <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
@@ -194,12 +192,23 @@
                         )}
 
                         {currentResult && (
-                            <section className="w-full max-w-3xl glass p-10 shadow-2xl animate-fade-in">
+                            <section className="w-full max-w-3xl backdrop-blur-xl bg-white/5 border border-white/10 rounded-3xl p-10 shadow-2xl animate-fade-in">
                                 <div className="flex justify-between items-start mb-10 border-b border-white/5 pb-6">
                                     <h2 className="text-3xl font-bold">{currentResult.topic}</h2>
-                                    <div className={`vibe-badge vibe-${currentResult.sentiment.toLowerCase()}`}>
-                                        {currentResult.sentiment}
-                                    </div>
+                                    {(() => {
+                                        const vibe = currentResult.sentiment.toLowerCase();
+                                        const vibeColors = {
+                                            positive: 'bg-green-500/10 text-green-400 border-green-500/50',
+                                            neutral: 'bg-gray-500/10 text-gray-400 border-gray-500/50',
+                                            negative: 'bg-red-500/10 text-red-400 border-red-500/50'
+                                        };
+                                        const colorClass = vibeColors[vibe] || vibeColors.neutral;
+                                        return (
+                                            <div className={`px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-widest border ${colorClass}`}>
+                                                {currentResult.sentiment}
+                                            </div>
+                                        );
+                                    })()}
                                 </div>
                                 <div className="space-y-8">
                                     {currentResult.summary.split('\n').filter(p => p.trim()).map((point, i) => (
