@@ -36,9 +36,9 @@ GEMINI_API_KEY = os.environ.get('GEMINI_API_KEY')
 if GEMINI_API_KEY:
     genai.configure(api_key=GEMINI_API_KEY)
 
-@app.route('/')
-def index():
-    return render_template('index.html')
+@app.route('/', methods=['GET'])
+def home():
+    return "Live and Running!"                                
 
 @app.route('/history', methods=['GET'])
 def get_history():
