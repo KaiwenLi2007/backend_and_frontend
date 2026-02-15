@@ -1,0 +1,32 @@
+DEVELOPMENT HISTORY: USER PROMPTS
+================================================================================
+This file documents the key prompts and requests made during the development of this project, organized by phase.
+
+1. Project Inception: Web App Migration
+-------------------------------------------------
+"Migrate the web application to a modern, functional state."
+"Pivot to an Enhanced Vanilla SPA due to environmental constraints."
+"Create a standalone HTML file that connects to the deployed Render backend."
+
+2. Feature Enhancement: Tourism & UI
+-------------------------------------------------
+"Enhance the Global Explorer application by improving the display of tourism sites with descriptions and images."
+"Increase the size of the search bar."
+"Fetch richer data from Wikipedia."
+"Refine frontend styles for better presentation and usability."
+
+3. Deployment: Production Readiness
+-------------------------------------------------
+"Make the application deployable on Render."
+"Run on Render."
+"Update to specific Render URL: https://backend-and-frontend-kl5.onrender.com"
+"I still need the render link."
+
+4. Core Upgrade: News Intelligence Engine
+-------------------------------------------------
+"Fetch more articles (increase pageSize to 10)."
+"Update the Gemini prompt to generate an 'Analyst Assessment' (a synthesized paragraph)."
+"Generate 'Key Points' (bulleted list)."
+"Modify the frontend to parse and display this new, richer format."
+"Ensure backward compatibility with older, simpler history entries."
+"Add a readme file that content what this project do and related information."
