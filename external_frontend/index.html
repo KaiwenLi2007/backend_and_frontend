@@ -211,14 +211,40 @@
                                     })()}
                                 </div>
                                 <div className="space-y-8">
-                                    {currentResult.summary.split('\n').filter(p => p.trim()).map((point, i) => (
-                                        <div key={i} className="flex gap-4 group">
-                                            <div className="w-2 h-2 rounded-full bg-accent mt-2.5 group-hover:scale-125 transition-transform shadow-[0_0_8px_#58a6ff]"></div>
-                                            <p className="flex-1 text-lg text-gray-200 leading-relaxed">
-                                                {point.replace(/^[-•*]\s*/, '')}
-                                            </p>
-                                        </div>
-                                    ))}
+
+                                    {currentResult.summary.includes('Assessment:') ? (
+                                        <>
+                                            {/* New Format Display */}
+                                            <div className="bg-white/5 p-6 rounded-2xl border border-white/5 italic text-gray-300 leading-relaxed shadow-inner">
+                                                <span className="text-accent font-bold not-italic block mb-2 text-xs uppercase tracking-widest">Analyst Assessment</span>
+                                                {currentResult.summary.split('Key Points:')[0].replace('Assessment:', '').trim()}
+                                            </div>
+
+                                            <div className="mt-8">
+                                                <span className="text-gray-500 font-bold text-xs uppercase tracking-widest block mb-4">Key Developments</span>
+                                                <div className="space-y-4">
+                                                    {currentResult.summary.split('Key Points:')[1]?.split('\n').filter(line => line.trim().startsWith('-')).map((point, i) => (
+                                                        <div key={i} className="flex gap-4 group">
+                                                            <div className="w-2 h-2 rounded-full bg-accent mt-2.5 group-hover:scale-125 transition-transform shadow-[0_0_8px_#58a6ff]"></div>
+                                                            <p className="flex-1 text-lg text-gray-200 leading-relaxed">
+                                                                {point.replace(/^-\s*/, '')}
+                                                            </p>
+                                                        </div>
+                                                    ))}
+                                                </div>
+                                            </div>
+                                        </>
+                                    ) : (
+                                        /* Fallback for Old History */
+                                        currentResult.summary.split('\n').filter(p => p.trim()).map((point, i) => (
+                                            <div key={i} className="flex gap-4 group">
+                                                <div className="w-2 h-2 rounded-full bg-accent mt-2.5 group-hover:scale-125 transition-transform shadow-[0_0_8px_#58a6ff]"></div>
+                                                <p className="flex-1 text-lg text-gray-200 leading-relaxed">
+                                                    {point.replace(/^[-•*]\s*/, '')}
+                                                </p>
+                                            </div>
+                                        ))
+                                    )}
                                 </div>
                             </section>
                         )}

@@ -68,7 +68,7 @@ def get_news():
 
     try:
         # 1. Fetch from NewsAPI
-        news_url = f"https://newsapi.org/v2/everything?q={topic}&pageSize=5&sortBy=relevancy&apiKey={NEWS_API_KEY}"
+        news_url = f"https://newsapi.org/v2/everything?q={topic}&pageSize=10&sortBy=relevancy&apiKey={NEWS_API_KEY}"
         response = requests.get(news_url)
         news_data = response.json()
 
@@ -107,15 +107,16 @@ def get_news():
                 print(f"Trying Gemini model: {model_name}...")
                 model = genai.GenerativeModel(model_name)
                 
-                # Check if model works with a simple prompt first (optional but safer)
-                # or just proceed with the actual prompt
-                
                 prompt = (
-                    f"Based on the following news snippets about '{topic}', provide:\n"
-                    "1. A 3-point executive summary (bullet points).\n"
-                    "2. A 'Vibe Check' sentiment (one of: Positive, Neutral, Negative).\n\n"
+                    f"Analyze the following news snippets about '{topic}' and provide a structured report:\n"
+                    "1. **Analyst Assessment**: A 2-3 sentence 'big picture' summary of the situation.\n"
+                    "2. **Key Developments**: 3-5 distinct bullet points of the most important details.\n"
+                    "3. **Vibe Check**: One of (Positive, Neutral, Negative).\n\n"
                     f"News Snippets:\n{context}\n\n"
-                    "Respond in format:\nSummary: [Point 1]\n[Point 2]\n[Point 3]\nSentiment: [Vibe Check]"
+                    "Respond in this EXACT format:\n"
+                    "Assessment: [Your Analyst Assessment paragraph]\n"
+                    "Key Points:\n- [Point 1]\n- [Point 2]\n..."
+                    "Sentiment: [Vibe Check]"
                 )
                 
                 gemini_response = model.generate_content(prompt)
@@ -132,9 +133,10 @@ def get_news():
 
         full_text = gemini_response.text
 
-        # Parsing (basic)
+        # Parsing
         parts = full_text.split("Sentiment:")
-        summary = parts[0].replace("Summary:", "").strip()
+        # Store everything before "Sentiment:" (Assessment + Key Points) as the summary
+        summary = parts[0].strip()
         sentiment = parts[1].strip() if len(parts) > 1 else "Neutral"
 
         # 3. Save to History
